@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <!-- join currently existing rooms -->
-    <div id = "room container">
+    <!-- join existing rooms -->
+    <div id = "room-container">
         <% Object.keys(rooms).map(room => { %>
             <div> <%= room %> </div>
             <a href = "/<%=room%>"> Join Room </a>
@@ -19,9 +19,10 @@
 
     <!-- form to create new rooms -->
     <form action = "/room" method = "POST">
-       <input name = "room" type= "text">
+       <input name = "room" type= "text" required>
        <button type = "submit"> Create New Room </button>  
     </form>
+    
 </body>
 
 

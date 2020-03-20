@@ -15,7 +15,19 @@ app.get('/', (req,res) => {
 });
 
 app.get(':/room', (req,res) => {
-  res.render('room', {roomName: req.params.room})
+  if(rooms[req.params.room]) {
+    res.render('room', {roomName: req.params.room})
+  }
+})
+
+app.post('/room', (req,res) => {
+  //if there is already a room of that name
+  if(rooms[req.body.name] != null) {
+    return res.redirect('/');
+  }
+  rooms[req.body.room] = {users: {}}
+  res.redirect(req.body.room); 
+  io.emit('room-created', req.body.room);
 })
 
 app.listen(3000);
