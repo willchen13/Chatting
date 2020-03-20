@@ -14,27 +14,35 @@ app.get('/', (req,res) => {
   res.render('index', {rooms: rooms})
 });
 
-app.get(':/room', (req,res) => {
-  if(rooms[req.params.room]) {
-    res.render('room', {roomName: req.params.room})
-  }
-})
 
 app.post('/room', (req,res) => {
   //if there is already a room of that name
-  if(rooms[req.body.name] != null) {
+
+  // console.log(req.body, 'what is request');
+  if(rooms[req.body.room] != null) {
     return res.redirect('/');
   }
+  //if room doesnt exist create a new room
   rooms[req.body.room] = {users: {}}
-  res.redirect(req.body.room); 
+  //redirect user to the new room route
+  res.redirect(req.body.room);
   io.emit('room-created', req.body.room);
 })
 
-app.listen(3000);
+app.get('/:room', (req,res) => {
+  //only render if the room exists in the rooms object
+  // console.log('what is params', req.params.room);
+  if(rooms[req.params.room]) {
+    return res.render('room', {roomName: req.params.room})
+  }
+})
+
+server.listen(3000);
+
+const users = {}
 
 io.on('connection', socket => {
 
-    const users={}
     socket.on('new-user', name => {
       users[socket.id] = name;
       socket.broadcast.emit('user-connected', name);
@@ -42,7 +50,6 @@ io.on('connection', socket => {
     socket.on('send-chat-message', message => {
       socket.broadcast.emit('chat-message', {message: message, name: users[socket.id]});
     })
-    
     socket.on('disconnect', () => {
       socket.broadcast.emit('user-disconnected', users[socket.id]);
       delete users[socket.id];
