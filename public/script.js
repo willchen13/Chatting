@@ -9,12 +9,12 @@ if(messageForm != null) {
 
     const name = prompt('what is your name?');
     appendMessage('you joined the chat');
-    socket.emit('new-user', name);
+    socket.emit('new-user', roomName, name);
 
     messageForm.addEventListener('submit', e => {
         e.preventDefault();
         const message = messageInput.value;
-        socket.emit('send-chat-message', message);
+        socket.emit('send-chat-message', roomName, message);
         messageInput.value = '';
     })
 }
